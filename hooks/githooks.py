@@ -16,13 +16,15 @@ def prepare_commit_msg_hook(fn):
     def wrapper(temp_msg_file):
         return fn(temp_msg_file)
 
-    HOOKS['prepare_commit_msg'] = wrapper
+    HOOKS['prepare-commit-msg'].append(wrapper)
     return wrapper
 
 
 @prepare_commit_msg_hook
 def append_jira_ticket_id(temp_msg_file):
-    branch_name = subprocess.check_output('git symbolic-ref --short HEAD')
+    branch_name = subprocess.check_output('git symbolic-ref --short HEAD', shell=True).strip()
+    if '-' not in branch_name:
+        return
     jira_ticket, _ = branch_name.split('-', 2)
     with open(temp_msg_file, 'rw') as fh:
         msg = fh.read()
