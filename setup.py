@@ -9,7 +9,7 @@ setuptools.setup(
     author_email="kevin@idempotent.ca",
 
     description="Convenient git hooks",
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
 
     packages=setuptools.find_packages(),
 
@@ -24,4 +24,10 @@ setuptools.setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
+
+    entry_points={
+        'console_scripts': [
+            'hooks=hooks.main:cli',
+        ]
+    },
 )
