@@ -1,3 +1,4 @@
+import re
 import functools
 import subprocess
 from collections import defaultdict
@@ -19,6 +20,15 @@ def prepare_commit_msg_hook(fn):
     return wrapper
 
 
+def commit_msg_hook(fn):
+    @functools.wraps(fn)
+    def wrapper(temp_msg_file):
+        return fn(temp_msg_file)
+
+    HOOKS['commit-msg'].append(wrapper)
+    return wrapper
+
+
 @prepare_commit_msg_hook
 def prepend_jira_ticket_id(temp_msg_file):
     """If you name your branch using the following scheme:
@@ -31,7 +41,7 @@ def prepend_jira_ticket_id(temp_msg_file):
     """
     branch_name = subprocess.check_output('git symbolic-ref --short HEAD', shell=True).strip()
     if '-' not in branch_name:
-        return
+        return True
     parts = branch_name.split('-')
     jira_ticket = '-'.join(parts[:2])
     with open(temp_msg_file, 'r') as fh:
@@ -40,3 +50,23 @@ def prepend_jira_ticket_id(temp_msg_file):
     msg = '{}: {}'.format(jira_ticket, msg)
     with open(temp_msg_file, 'w') as fh:
         fh.write(msg)
+
+    return True
+
+
+@commit_msg_hook
+def validate_message_starts_with_ticket_id(temp_msg_file):
+    """Validate that the first line of the commit message contains a ticket id
+
+    Ticket ids are in the form of issue-NNNNN or JIRAPROJECT-NNNNN
+    """
+    with open(temp_msg_file, 'r') as fh:
+        first_line = fh.readlines()[0]
+
+    m = re.search(r'^\w+\-\d+[:]?\s', first_line)
+    if not m:
+        print('Commit aborted: '
+              'The first line of the commit message should start with the ticket id')
+        return False
+
+    return True

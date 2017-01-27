@@ -31,10 +31,12 @@ Options:
     use_force = args.get('-f', False)
     _ensure_cwd_is_a_git_repo()
     git_hook_directory = os.path.join(os.getcwd(), '.git', 'hooks')
-    source = os.path.join(os.path.dirname(__file__), 'githooks', 'prepare-commit-msg')
-    dest = os.path.join(git_hook_directory, 'prepare-commit-msg')
-    if _copy_file(source, dest, use_force):
-        print('prepare-commit-msg hook installed')
+
+    for hook in ('prepare-commit-msg', 'commit-msg'):
+        source = os.path.join(os.path.dirname(__file__), 'githooks', hook)
+        dest = os.path.join(git_hook_directory, hook)
+        if _copy_file(source, dest, use_force):
+            print('{} hook installed'.format(hook))
 
 
 def update(args):
