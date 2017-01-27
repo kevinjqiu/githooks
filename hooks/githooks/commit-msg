@@ -5,6 +5,6 @@ from hooks import get_active_hooks
 
 if __name__ == '__main__':
     temp_msg_file = sys.argv[1]
-    for hook in get_active_hooks('prepare-commit-msg'):
+    for hook in get_active_hooks('commit-msg'):
         print('Running hook: {}'.format(hook.__name__))
         hook(temp_msg_file)

@@ -1,4 +1,3 @@
-import re
 import functools
 import subprocess
 from collections import defaultdict
@@ -21,7 +20,7 @@ def prepare_commit_msg_hook(fn):
 
 
 @prepare_commit_msg_hook
-def append_jira_ticket_id(temp_msg_file):
+def prepend_jira_ticket_id(temp_msg_file):
     """If you name your branch using the following scheme:
 
         issue-NNNNN-description
