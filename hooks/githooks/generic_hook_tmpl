@@ -4,8 +4,7 @@ from hooks import get_active_hooks
 
 
 if __name__ == '__main__':
-    temp_msg_file = sys.argv[1]
-    for hook in get_active_hooks('prepare-commit-msg'):
+    for hook in get_active_hooks("$hook_type"):
         print('Running hook: {}'.format(hook.__name__))
-        if not hook(temp_msg_file):
+        if not hook(*sys.argv[1:]):
             sys.exit(1)

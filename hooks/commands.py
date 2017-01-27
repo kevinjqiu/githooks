@@ -1,5 +1,6 @@
-import shutil
+import string
 import os
+import stat
 
 
 def _ensure_cwd_is_a_git_repo():
@@ -9,13 +10,16 @@ def _ensure_cwd_is_a_git_repo():
         raise RuntimeError('Must be in a git repository')
 
 
-def _copy_file(src, dest, use_force):
+def _generate_hook(src_content, dest, use_force):
     if os.path.exists(dest) and not use_force:
         user_input = raw_input('{} exists. \n'
                                'Do you want to overwrite it? [Y/n] '.format(dest))
         if user_input.lower() == 'n':
             return False
-    shutil.copy(src, dest)
+    with open(dest, 'w') as fh:
+        fh.write(src_content)
+
+    os.chmod(dest, stat.S_IXUSR | stat.S_IREAD | stat.S_IWRITE)
     return True
 
 
@@ -33,9 +37,12 @@ Options:
     git_hook_directory = os.path.join(os.getcwd(), '.git', 'hooks')
 
     for hook in ('prepare-commit-msg', 'commit-msg'):
-        source = os.path.join(os.path.dirname(__file__), 'githooks', hook)
+        source = os.path.join(os.path.dirname(__file__), 'githooks', 'generic_hook_tmpl')
+        with open(source, 'r') as fh:
+            tmpl = string.Template(fh.read())
+            source_content = tmpl.substitute(hook_type=hook)
         dest = os.path.join(git_hook_directory, hook)
-        if _copy_file(source, dest, use_force):
+        if _generate_hook(source_content, dest, use_force):
             print('{} hook installed'.format(hook))
 
 
