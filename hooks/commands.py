@@ -1,10 +1,15 @@
+import shutil
+import os
+
+
 def dispatch(arguments):
+    command = arguments['COMMAND']
     try:
-        if arguments['install']:
+        if command == 'install':
             return install(arguments)
-        elif arguments['update']:
+        elif command == 'update':
             return update(arguments)
-        elif arguments['ls']:
+        elif command == 'ls':
             return ls(arguments)
         else:
             raise RuntimeError('No action specified')
@@ -21,6 +26,14 @@ def _ensure_cwd_is_a_git_repo():
 
 
 def install(args):
+    """\
+Install the hooks into the current git repository.
+
+Usage:
+    install [-f]
+
+Options:
+    -f  Overwrite without prompt when the hook already exists."""
     _ensure_cwd_is_a_git_repo()
     git_hook_directory = os.path.join(os.getcwd(), '.git', 'hooks')
     source = os.path.join(os.path.dirname(__file__), 'githooks', 'prepare-commit-msg')
