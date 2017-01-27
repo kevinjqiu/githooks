@@ -1,9 +1,0 @@
-#!/bin/bash
-
-MSG_TMP_FILE=$1
-BRANCH_NAME=$(git symbolic-ref --short HEAD)
-JIRA_TICKET=$(echo $BRANCH_NAME | cut -d'-' -f1,2)
-
-if [ -n "$BRANCH_NAME" ]; then
-    sed -i.bak "1s/^/$JIRA_TICKET: /" "$MSG_TMP_FILE"
-fi
