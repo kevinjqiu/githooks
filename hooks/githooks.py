@@ -13,8 +13,8 @@ def get_active_hooks(hook_type):
 
 def prepare_commit_msg_hook(fn):
     @functools.wraps(fn)
-    def wrapper(temp_msg_file):
-        return fn(temp_msg_file)
+    def wrapper(temp_msg_file, *args):
+        return fn(temp_msg_file, *args)
 
     HOOKS['prepare-commit-msg'].append(wrapper)
     return wrapper
@@ -22,15 +22,15 @@ def prepare_commit_msg_hook(fn):
 
 def commit_msg_hook(fn):
     @functools.wraps(fn)
-    def wrapper(temp_msg_file):
-        return fn(temp_msg_file)
+    def wrapper(temp_msg_file, *args):
+        return fn(temp_msg_file, *args)
 
     HOOKS['commit-msg'].append(wrapper)
     return wrapper
 
 
 @prepare_commit_msg_hook
-def prepend_jira_ticket_id(temp_msg_file):
+def prepend_jira_ticket_id(temp_msg_file, *args):
     """If you name your branch using the following scheme:
 
         issue-NNNNN-description
@@ -55,7 +55,7 @@ def prepend_jira_ticket_id(temp_msg_file):
 
 
 @commit_msg_hook
-def validate_message_starts_with_ticket_id(temp_msg_file):
+def validate_message_starts_with_ticket_id(temp_msg_file, *args):
     """Validate that the first line of the commit message contains a ticket id
 
     Ticket ids are in the form of issue-NNNNN or JIRAPROJECT-NNNNN
