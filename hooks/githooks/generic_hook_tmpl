@@ -1,6 +1,11 @@
 #! /usr/bin/env python
 import sys
-from hooks import get_active_hooks
+try:
+    from hooks import get_active_hooks
+except ImportError:
+    print('Cannot import hooks. '
+          'Did you do `pip install hooks` or are you in the right virtualenv?')
+    sys.exit(0)
 
 
 if __name__ == '__main__':
