@@ -1,0 +1,10 @@
+#! /usr/bin/env python
+import sys
+from hooks import get_active_hooks
+
+
+if __name__ == '__main__':
+    for hook in get_active_hooks("$hook_type"):
+        print('Running hook: {}'.format(hook.__name__))
+        if not hook(*sys.argv[1:]):
+            sys.exit(1)
