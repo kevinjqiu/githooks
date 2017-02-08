@@ -1,8 +1,10 @@
 import setuptools
 
+install_requires = open('requirements.txt').readlines()
+
 setuptools.setup(
     name="hooks",
-    version="0.1.0",
+    version="0.1.1",
     url="https://github.com/kevinjqiu/githooks",
 
     author="Kevin Jing Qiu",
@@ -13,7 +15,7 @@ setuptools.setup(
 
     packages=setuptools.find_packages(),
 
-    install_requires=[],
+    install_requires=install_requires,
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
